@@ -94,21 +94,6 @@ export interface FAQ {
   updated_at?: string;
 }
 
-export interface PKLSubmission {
-  id: number;
-  student_name: string;
-  university: string;
-  major: string;
-  internship_period: string;
-  email: string;
-  phone: string;
-  cv_url: string;
-  status: 'pending' | 'approved' | 'rejected';
-  notes: string;
-  created_at: string;
-  updated_at: string;
-}
-
 export interface APIErrorResponse {
   message: string;
 }

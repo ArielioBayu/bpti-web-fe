@@ -44,11 +44,6 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/pkl" className="hover:text-white transition-colors duration-200">
-                  Registrasi PKL/Magang
-                </Link>
-              </li>
-              <li>
                 <Link href="/login" className="hover:text-white transition-colors duration-200">
                   Login Admin
                 </Link>

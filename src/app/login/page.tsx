@@ -2,13 +2,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useAuth } from '../context/AuthContext';
 import { Monitor, Key, User, Eye, EyeOff, AlertCircle } from 'lucide-react';
 
 export default function LoginPage() {
   const { login, user, loading: authLoading } = useAuth();
   const router = useRouter();
-  
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -38,7 +39,7 @@ export default function LoginPage() {
     } catch (err: any) {
       console.error('Login error:', err);
       setError(
-        err.response?.data?.message || 
+        err.response?.data?.message ||
         'Login gagal. Periksa username dan password Anda.'
       );
     } finally {
@@ -141,12 +142,12 @@ export default function LoginPage() {
           </form>
 
           <div className="mt-8 pt-6 border-t border-white/10 text-center">
-            <a
+            <Link
               href="/"
               className="text-xs font-bold text-slate-400 hover:text-white transition-colors"
             >
               ← Kembali ke Beranda Publik
-            </a>
+            </Link>
           </div>
         </div>
       </div>

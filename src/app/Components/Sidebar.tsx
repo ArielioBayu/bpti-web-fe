@@ -7,7 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import { 
   LayoutDashboard, FileText, Tags, HelpCircle, Users, 
   Layers, FolderOpen, Download, LogOut, ChevronRight, Monitor,
-  Image as ImageIcon
+  Image as ImageIcon, KeyRound
 } from 'lucide-react';
 
 export default function Sidebar() {
@@ -24,11 +24,7 @@ export default function Sidebar() {
     { name: 'Proyek BPTI', href: '/admin/products', icon: Layers },
     { name: 'Media Library', href: '/admin/media', icon: FolderOpen },
     { name: 'File Management', href: '/admin/downloads', icon: Download },
-  ];
-
-  // Also include the PKL submissions inside admin
-  const extraItems = [
-    { name: 'Pengajuan PKL', href: '/admin/pkl', icon: FileText }
+    { name: 'Ganti Password', href: '/admin/change-password', icon: KeyRound },
   ];
 
   return (
@@ -97,33 +93,7 @@ export default function Sidebar() {
           </nav>
         </div>
 
-        <div>
-          <span className="px-3 text-[10px] font-bold text-blue-200/60 uppercase tracking-widest block mb-3">
-            INTERNSHIP
-          </span>
-          <nav className="space-y-1">
-            {extraItems.map((item) => {
-              const isActive = pathname.startsWith(item.href);
-              return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`flex items-center justify-between px-3 py-3 rounded-xl text-sm font-semibold transition-all duration-150 group ${
-                    isActive
-                      ? 'bg-white/15 text-white shadow-md'
-                      : 'text-blue-100 hover:bg-white/5 hover:text-white'
-                  }`}
-                >
-                  <div className="flex items-center space-x-3">
-                    <item.icon className={`w-4 h-4 shrink-0 transition-transform group-hover:scale-105 ${isActive ? 'text-white' : 'text-blue-200/70'}`} />
-                    <span>{item.name}</span>
-                  </div>
-                  {isActive && <ChevronRight className="w-3.5 h-3.5 text-white" />}
-                </Link>
-              );
-            })}
-          </nav>
-        </div>
+
       </div>
 
       {/* Sidebar Logout Footer */}

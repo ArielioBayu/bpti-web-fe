@@ -265,33 +265,71 @@ export default function HomePage() {
         </section>
       </div>
 
-      {/* 2. STATS SECTION (Floating overlapping card wrapper) */}
-      <div className="relative max-w-7xl mx-auto px-6 sm:px-8 -mt-16 z-30 mb-32">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 bg-white border border-slate-200/55 p-8 rounded-[2.25rem] shadow-2xl shadow-slate-200/50">
-          {[
-            { label: 'Total Berita', count: stats.newsCount, icon: BookOpen, color: 'text-blue-600 bg-blue-50' },
-            { label: 'Aplikasi Aktif', count: stats.appsCount, icon: Layers, color: 'text-purple-600 bg-purple-50' },
-            { label: 'Anggota Tim', count: stats.teamCount, icon: Users, color: 'text-emerald-600 bg-emerald-50' },
-            { label: 'Testimonial', count: stats.testimonialsCount, icon: MessageSquare, color: 'text-amber-600 bg-amber-50' },
-          ].map((item, index) => (
-            <div key={index} className="flex items-center space-x-4 p-4 hover:bg-slate-50 rounded-2xl transition-colors duration-200">
-              <div className={`p-4 rounded-xl ${item.color}`}>
-                <item.icon className="w-6 h-6" />
-              </div>
-              <div>
-                {loading ? (
-                  <div className="h-7 w-12 bg-slate-200 animate-pulse rounded-md"></div>
-                ) : (
-                  <span className="block text-2xl font-black text-slate-900">
-                    {item.count}
+      {/* 2. STATS SECTION (Ultra-Modern Glassmorphic Floating Cards) */}
+      <div className="relative max-w-7xl mx-auto px-6 sm:px-8 -mt-20 z-30 mb-28">
+        <div className="bg-white/90 backdrop-blur-xl border border-slate-200/80 p-6 sm:p-8 rounded-3xl shadow-[0_25px_60px_-15px_rgba(15,23,42,0.12)] relative overflow-hidden">
+          {/* Subtle top accent bar */}
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 via-indigo-500 to-emerald-500"></div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              {
+                label: 'Total Berita',
+                count: stats.newsCount,
+                icon: BookOpen,
+                badge: 'Rilis Informasi',
+                gradient: 'from-blue-600 to-indigo-600 shadow-blue-500/25',
+              },
+              {
+                label: 'Aplikasi Aktif',
+                count: stats.appsCount,
+                icon: Layers,
+                badge: 'Layanan Kampus',
+                gradient: 'from-purple-600 to-indigo-600 shadow-purple-500/25',
+              },
+              {
+                label: 'Anggota Tim',
+                count: stats.teamCount,
+                icon: Users,
+                badge: 'Teknisi & Engineer',
+                gradient: 'from-emerald-500 to-teal-600 shadow-emerald-500/25',
+              },
+              {
+                label: 'Testimonial',
+                count: stats.testimonialsCount,
+                icon: MessageSquare,
+                badge: 'Ulasan Pengguna',
+                gradient: 'from-amber-500 to-orange-600 shadow-amber-500/25',
+              },
+            ].map((item, index) => (
+              <div
+                key={index}
+                className="group flex items-start space-x-4 p-5 rounded-2xl bg-slate-50/80 border border-slate-100 hover:border-blue-200 hover:bg-white hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden"
+              >
+                {/* Icon Badge */}
+                <div className={`p-3.5 rounded-2xl bg-gradient-to-br ${item.gradient} text-white shadow-lg shrink-0 group-hover:scale-110 transition-transform duration-300`}>
+                  <item.icon className="w-6 h-6" />
+                </div>
+
+                {/* Content */}
+                <div className="space-y-1">
+                  {loading ? (
+                    <div className="h-9 w-16 bg-slate-200 animate-pulse rounded-lg"></div>
+                  ) : (
+                    <span className="block text-3xl sm:text-4xl font-black text-slate-900 tracking-tight group-hover:text-[#1E3A8A] transition-colors">
+                      {item.count}
+                    </span>
+                  )}
+                  <span className="text-xs font-extrabold text-slate-700 uppercase tracking-wider block">
+                    {item.label}
                   </span>
-                )}
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">
-                  {item.label}
-                </span>
+                  <span className="inline-block text-[10px] font-bold text-slate-400 tracking-wide">
+                    • {item.badge}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
 
@@ -390,91 +428,106 @@ export default function HomePage() {
         </section>
       </div>
 
-      {/* 4. RECENT NEWS GRID (Wrapped inside a full-width pure white container) */}
-      <div className="w-full bg-white border-b border-slate-200/50 py-24 mb-32 bg-grid-pattern">
-        <section className="max-w-7xl mx-auto px-6 sm:px-8 space-y-16">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-6 border-b border-slate-200/65">
-            <div className="space-y-2 text-center md:text-left">
-              <span className="text-[10px] font-black uppercase text-[#F97316] tracking-widest bg-orange-50 px-3 py-1 rounded-full border border-orange-100">Kabar Akademik</span>
-              <h2 className="text-3xl font-black text-slate-900 sm:text-4xl uppercase tracking-tight">
-                Berita & Pengumuman BPTI
-              </h2>
-            </div>
-            <Link
-              href="/news"
-              className="inline-flex items-center px-6 py-3.5 text-xs font-black text-[#1E3A8A] border-2 border-slate-200 hover:border-[#1E3A8A] rounded-full hover:bg-slate-50 transition-colors uppercase tracking-wider"
-            >
-              Lihat Semua Berita
-              <ArrowRight className="ml-2 w-4 h-4" />
-            </Link>
+      {/* 4. RECENT NEWS GRID – Editorial Magazine Style */}
+      <div className="w-full bg-white py-20 mb-32">
+        <section className="max-w-7xl mx-auto px-6 sm:px-8 space-y-14">
+
+          {/* Section Header — centered with yellow underline accent */}
+          <div className="flex flex-col items-center text-center space-y-3">
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+              Berita
+            </h2>
+            <div className="w-12 h-1 rounded-full bg-[#F9A825]"></div>
           </div>
 
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[1, 2, 3].map(i => (
-                <div key={i} className="bg-slate-50 rounded-[2rem] overflow-hidden border shadow animate-pulse h-64"></div>
+                <div key={i} className="rounded-2xl overflow-hidden animate-pulse">
+                  <div className="h-72 bg-slate-200"></div>
+                  <div className="pt-5 space-y-3">
+                    <div className="h-3 w-24 bg-slate-200 rounded"></div>
+                    <div className="h-5 w-full bg-slate-200 rounded"></div>
+                    <div className="h-5 w-3/4 bg-slate-200 rounded"></div>
+                    <div className="h-3 w-full bg-slate-100 rounded"></div>
+                  </div>
+                </div>
               ))}
             </div>
           ) : newsList.length === 0 ? (
-            <div className="text-center py-20 bg-slate-50 border rounded-[2rem] max-w-md mx-auto space-y-4">
-              <FileText className="mx-auto w-10 h-10 text-slate-350" />
+            <div className="text-center py-20 bg-slate-50 border rounded-2xl max-w-md mx-auto space-y-4">
+              <FileText className="mx-auto w-10 h-10 text-slate-400" />
               <p className="text-slate-500 text-xs font-bold">Belum ada rilis berita saat ini.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {newsList.slice(0, 3).map(news => (
-                <article
-                  key={news.id}
-                  className="group bg-slate-50 rounded-[2rem] overflow-hidden border border-slate-200/50 shadow-sm hover:shadow-[0_25px_50px_rgba(15,23,42,0.06)] hover:-translate-y-1 transition-all duration-300 flex flex-col h-full"
-                >
-                  <div className="relative h-52 bg-slate-100 overflow-hidden shrink-0">
-                    <Image
-                      src={news.image_url?.startsWith('http') ? news.image_url : `http://localhost:8080${news.image_url}`}
-                      alt={news.title}
-                      fill
-                      className="object-cover group-hover:scale-103 transition-transform duration-500"
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&auto=format&fit=crop&q=80';
-                      }}
-                    />
-                    {news.category_name && (
-                      <span className="absolute top-4 left-4 inline-block px-3 py-1 text-[9px] font-black text-white bg-[#1E3A8A] rounded-lg uppercase tracking-wider">
-                        {news.category_name}
+                <article key={news.id} className="group flex flex-col">
+
+                  {/* Image Block — tall, full-bleed, with yellow arrow button overlay */}
+                  <Link href={`/news/${news.slug}`} className="block relative rounded-2xl overflow-hidden">
+                    {/* Image */}
+                    <div className="relative h-72 bg-slate-200 overflow-hidden">
+                      <Image
+                        src={news.image_url?.startsWith('http') ? news.image_url : `http://localhost:8080${news.image_url}`}
+                        alt={news.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&auto=format&fit=crop&q=80';
+                        }}
+                      />
+                      {/* Subtle bottom gradient for readability */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
+                    </div>
+
+                    {/* Yellow arrow button — bottom-right corner of image */}
+                    <div className="absolute bottom-4 right-4 w-10 h-10 bg-[#F9A825] rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:bg-[#f59e0b] transition-all duration-300">
+                      <ArrowUpRight className="w-5 h-5 text-white" />
+                    </div>
+                  </Link>
+
+                  {/* Text Content — below the image, no card border */}
+                  <div className="pt-5 space-y-2.5">
+                    {/* Date */}
+                    <div className="flex items-center text-[11px] font-semibold text-slate-500 space-x-1.5">
+                      <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                      <span>
+                        {news.created_at
+                          ? new Date(news.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
+                          : '—'}
                       </span>
+                    </div>
+
+                    {/* Title */}
+                    <h3 className="font-black text-base sm:text-lg text-slate-900 leading-snug group-hover:text-[#1E3A8A] transition-colors line-clamp-2">
+                      <Link href={`/news/${news.slug}`}>{news.title}</Link>
+                    </h3>
+
+                    {/* Excerpt — generated from content */}
+                    {news.content && (
+                      <p className="text-sm text-slate-500 leading-relaxed line-clamp-2 font-normal">
+                        {news.content.replace(/<[^>]+>/g, '').slice(0, 120)}
+                      </p>
                     )}
-                  </div>
-
-                  <div className="p-6 flex flex-col justify-between flex-grow space-y-5">
-                    <div className="space-y-2">
-                      <div className="flex items-center text-[10px] font-bold text-slate-400 space-x-3">
-                        <span className="flex items-center">
-                          <Calendar className="w-3 h-3 mr-1" />
-                          {news.created_at?.split(' ')[0] || '16-07-2026'}
-                        </span>
-                        <span>{news.view_count || 0} views</span>
-                      </div>
-
-                      <h3 className="font-extrabold text-sm text-slate-900 group-hover:text-[#1E3A8A] transition-colors line-clamp-2 leading-snug">
-                        <Link href={`/news/${news.slug}`}>{news.title}</Link>
-                      </h3>
-                    </div>
-
-                    <div className="pt-4 mt-auto border-t border-slate-200/60 flex items-center justify-between text-xs font-bold text-slate-600">
-                      <span>Oleh: {news.author_name || 'Admin'}</span>
-                      <Link
-                        href={`/news/${news.slug}`}
-                        className="inline-flex items-center text-[#1E3A8A] uppercase tracking-wider font-black group-hover:translate-x-1 transition-transform"
-                      >
-                        Detail
-                        <ArrowRight className="ml-1 w-3.5 h-3.5" />
-                      </Link>
-                    </div>
                   </div>
                 </article>
               ))}
             </div>
           )}
+
+          {/* "Lihat Semua" link — bottom center */}
+          <div className="flex justify-center pt-4">
+            <Link
+              href="/news"
+              className="inline-flex items-center gap-2 px-7 py-3.5 text-xs font-black text-[#1E3A8A] border-2 border-[#1E3A8A] rounded-full hover:bg-[#1E3A8A] hover:text-white transition-colors uppercase tracking-widest"
+            >
+              Lihat Semua Berita
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+
         </section>
       </div>
 

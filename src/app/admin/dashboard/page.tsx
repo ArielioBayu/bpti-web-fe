@@ -3,8 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { 
-  FileText, Layers, Users, HelpCircle, ArrowUpRight, 
-  Plus, Sparkles, TrendingUp, CheckCircle, Clock, AlertTriangle,
+  FileText, Layers, Users, Plus, Sparkles, TrendingUp,
   Image as ImageIcon
 } from 'lucide-react';
 import { 
@@ -15,8 +14,7 @@ import { useAuth } from '../../context/AuthContext';
 import newsService from '../../services/news';
 import productsService from '../../services/products';
 import teamService from '../../services/team';
-import pklService from '../../services/pkl';
-import { News, Product, TeamMember, PKLSubmission } from '../../types';
+import { News, Product, TeamMember } from '../../types';
 
 export default function AdminDashboard() {
   const { user } = useAuth();
@@ -25,7 +23,6 @@ export default function AdminDashboard() {
   const [news, setNews] = useState<News[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [team, setTeam] = useState<TeamMember[]>([]);
-  const [submissions, setSubmissions] = useState<PKLSubmission[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Counters
@@ -33,8 +30,6 @@ export default function AdminDashboard() {
     news: 0,
     products: 0,
     team: 0,
-    submissions: 0,
-    pendingSubmissions: 0,
     activeSliders: 0,
   });
 
@@ -42,38 +37,32 @@ export default function AdminDashboard() {
     async function loadDashboardStats() {
       try {
         setLoading(true);
-        const [newsRes, prodRes, teamRes, pklRes, slideRes] = await Promise.all([
+        const [newsRes, prodRes, teamRes, slideRes] = await Promise.all([
           newsService.list({ limit: 100 }),
           productsService.list(),
           teamService.list(),
-          pklService.listSubmissions(),
           newsService.list({ category: 'slider', limit: 100 }),
         ]);
 
         const newsList = newsRes?.data || [];
         const prodList = prodRes || [];
         const teamList = teamRes || [];
-        const pklList = pklRes || [];
         const slideList = slideRes?.data || [];
 
         setNews(newsList);
         setProducts(prodList);
         setTeam(teamList);
-        setSubmissions(pklList);
 
-        const pending = pklList.filter(s => s?.status === 'pending').length;
         const activeSlides = slideList.filter(s => s.status === 'published').length;
 
         setStats({
           news: newsRes?.total || newsList.length,
           products: prodList.length,
           team: teamList.length,
-          submissions: pklList.length,
-          pendingSubmissions: pending,
           activeSliders: activeSlides,
         });
       } catch (err) {
-        console.error('Failed to load dashboard data:', err);
+        console.error('Failed to load dashboard stats:', err);
       } finally {
         setLoading(false);
       }
@@ -82,13 +71,13 @@ export default function AdminDashboard() {
     loadDashboardStats();
   }, []);
 
-  // 1. Data Prep for News Views Bar Chart
-  const topNewsChartData = (news || [])
-    .sort((a, b) => (b.view_count || 0) - (a.view_count || 0))
+  // 1. Data Prep for Top News Bar Chart (Views)
+  const topNewsChartData = [...news]
+    .sort((a, b) => b.view_count - a.view_count)
     .slice(0, 5)
-    .map(n => ({
-      name: n.title.length > 15 ? n.title.substring(0, 15) + '...' : n.title,
-      views: n.view_count || 0,
+    .map((item) => ({
+      name: item.title.length > 20 ? item.title.substring(0, 20) + '...' : item.title,
+      views: item.view_count,
     }));
 
   // 2. Data Prep for Team Division Pie Chart
@@ -103,18 +92,6 @@ export default function AdminDashboard() {
     name,
     value,
   }));
-
-  // 3. Data Prep for Submission Status Pie Chart
-  const submissionStatusCounts = (submissions || []).reduce((acc: Record<string, number>, sub) => {
-    acc[sub.status] = (acc[sub.status] || 0) + 1;
-    return acc;
-  }, { pending: 0, approved: 0, rejected: 0 });
-
-  const pklStatusChartData = [
-    { name: 'Menunggu (Pending)', value: submissionStatusCounts.pending, color: '#FBBF24' },
-    { name: 'Disetujui (Approved)', value: submissionStatusCounts.approved, color: '#10B981' },
-    { name: 'Ditolak (Rejected)', value: submissionStatusCounts.rejected, color: '#EF4444' },
-  ];
 
   return (
     <div className="space-y-8">
@@ -133,7 +110,7 @@ export default function AdminDashboard() {
             Selamat datang, {user?.name || 'Editor BPTI'} 👋
           </h1>
           <p className="text-slate-300 text-sm max-w-xl">
-            Kelola konten website BPTI UHAMKA — berita, proyek aplikasi, direktori tim, berkas unduhan, dan pantau pengajuan PKL yang masuk di sini.
+            Kelola konten website BPTI UHAMKA — berita, proyek aplikasi, direktori tim, dan berkas unduhan di sini.
           </p>
         </div>
 
@@ -249,93 +226,6 @@ export default function AdminDashboard() {
               </ResponsiveContainer>
             )}
           </div>
-        </div>
-      </div>
-
-      {/* Latest PKL Submissions Table */}
-      <div className="bg-white rounded-3xl border border-slate-200/50 shadow-sm overflow-hidden space-y-6 py-6">
-        <div className="px-6 flex items-center justify-between">
-          <div>
-            <h3 className="font-extrabold text-lg text-slate-900">Pengajuan PKL/Magang Terbaru</h3>
-            <p className="text-xs text-slate-500">Daftar pendaftaran magang mahasiswa yang masuk ke sistem BPTI</p>
-          </div>
-          <Link
-            href="/admin/pkl"
-            className="inline-flex items-center text-xs font-bold text-blue-600 hover:text-blue-700"
-          >
-            Kelola Semua
-            <ArrowUpRight className="ml-1 w-4 h-4" />
-          </Link>
-        </div>
-
-        <div className="overflow-x-auto border-t border-slate-100">
-          {loading ? (
-            <div className="p-6 space-y-4">
-              {[1, 2].map(i => (
-                <div key={i} className="h-10 bg-slate-50 rounded animate-pulse"></div>
-              ))}
-            </div>
-          ) : submissions.length === 0 ? (
-            <div className="text-center py-12 text-slate-500 font-medium text-sm">
-              Belum ada pengajuan PKL/Magang yang masuk ke sistem.
-            </div>
-          ) : (
-            <table className="w-full text-left border-collapse text-sm">
-              <thead>
-                <tr className="bg-slate-50 text-slate-500 font-bold border-b text-xs uppercase tracking-wider">
-                  <th className="px-6 py-4">Nama Mahasiswa</th>
-                  <th className="px-6 py-4">Institusi & Jurusan</th>
-                  <th className="px-6 py-4">Periode</th>
-                  <th className="px-6 py-4">Status</th>
-                  <th className="px-6 py-4 text-right">Aksi</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {submissions.slice(0, 5).map((sub) => {
-                  return (
-                    <tr key={sub.id} className="hover:bg-slate-50 transition-colors">
-                      <td className="px-6 py-4 font-bold text-slate-900">
-                        {sub.student_name}
-                      </td>
-                      <td className="px-6 py-4 text-slate-600 text-xs">
-                        <span className="font-semibold block">{sub.university}</span>
-                        <span className="text-slate-400 block mt-0.5">{sub.major}</span>
-                      </td>
-                      <td className="px-6 py-4 text-slate-600 text-xs">
-                        {sub.internship_period}
-                      </td>
-                      <td className="px-6 py-4">
-                        {sub.status === 'approved' ? (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded text-[10px] font-bold bg-green-50 text-green-700 border border-green-200">
-                            <CheckCircle className="w-3 h-3 mr-1" />
-                            Disetujui
-                          </span>
-                        ) : sub.status === 'rejected' ? (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded text-[10px] font-bold bg-red-50 text-red-700 border border-red-200">
-                            <AlertTriangle className="w-3 h-3 mr-1" />
-                            Ditolak
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded text-[10px] font-bold bg-yellow-50 text-yellow-700 border border-yellow-200">
-                            <Clock className="w-3 h-3 mr-1" />
-                            Menunggu
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        <Link
-                          href="/admin/pkl"
-                          className="px-3.5 py-1.5 text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 border border-blue-100 rounded-lg"
-                        >
-                          Detail
-                        </Link>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          )}
         </div>
       </div>
     </div>
